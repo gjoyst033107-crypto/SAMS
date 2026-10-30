@@ -1,0 +1,593 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Attendance Summary - SAMS</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 25px;
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fb;
+            color: #263449;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        /* HEADER */
+
+        .header {
+            background: white;
+            padding: 25px;
+            border: 1px solid #dce4ed;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            margin: 0 0 8px;
+            color: #172b4d;
+            font-size: 26px;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 14px;
+            margin: 0 0 20px;
+            line-height: 1.6;
+        }
+
+        .buttons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 16px;
+            border-radius: 6px;
+            background-color: #21845a;
+            color: white;
+            text-decoration: none;
+            border: 1px solid #21845a;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .button:hover {
+            background-color: #176b47;
+            border-color: #176b47;
+        }
+
+        .button.secondary {
+            background-color: #edf2f7;
+            color: #243e63;
+            border-color: #dce4ed;
+        }
+
+        .button.secondary:hover {
+            background-color: #dce6f0;
+        }
+
+        /* FLASH MESSAGES */
+
+        .notice {
+            padding: 12px 15px;
+            margin-bottom: 15px;
+            border-radius: 6px;
+            background-color: #fff4d6;
+            color: #7c5b12;
+            border: 1px solid #f1dfaa;
+            font-size: 14px;
+        }
+
+        /* FILTER AND DOWNLOAD PANELS */
+
+        .summary-tools {
+            display: grid;
+            grid-template-columns: 1.4fr 0.8fr;
+            gap: 18px;
+            margin-bottom: 20px;
+            align-items: stretch;
+        }
+
+        .tool-panel {
+            background-color: white;
+            padding: 22px;
+            border: 1px solid #dce4ed;
+            border-radius: 10px;
+            min-width: 0;
+        }
+
+        .tool-panel h2 {
+            margin: 0 0 7px;
+            color: #172b4d;
+            font-size: 18px;
+        }
+
+        .panel-description {
+            color: #718096;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 0 0 18px;
+        }
+
+        .date-fields {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 14px;
+            align-items: end;
+        }
+
+        .field {
+            display: flex;
+            flex-direction: column;
+            gap: 7px;
+            flex: 1;
+            min-width: 145px;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 13px;
+            color: #34445a;
+        }
+
+        input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 13px;
+            color: #263449;
+            background-color: white;
+        }
+
+        input[type="date"]:focus {
+            outline: none;
+            border-color: #21845a;
+            box-shadow: 0 0 0 2px rgba(33, 132, 90, 0.12);
+        }
+
+        .generate-button {
+            min-height: 38px;
+            white-space: nowrap;
+        }
+
+        /* DOWNLOAD PANEL */
+
+        .download-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .download-content {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+        }
+
+        .download-icon {
+            width: 42px;
+            height: 42px;
+            min-width: 42px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #e8f5ee;
+            color: #21845a;
+            border-radius: 8px;
+            font-size: 21px;
+            font-weight: bold;
+        }
+
+        .download-text h2 {
+            margin: 2px 0 7px;
+        }
+
+        .download-text p {
+            margin: 0;
+            color: #718096;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .download-button {
+            margin-top: 18px;
+            width: 100%;
+        }
+
+        /* SUMMARY TABLE */
+
+        .table-section {
+            background-color: white;
+            border: 1px solid #dce4ed;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .table-heading {
+            padding: 18px 20px;
+            border-bottom: 1px solid #dce4ed;
+        }
+
+        .table-heading h2 {
+            margin: 0;
+            color: #172b4d;
+            font-size: 18px;
+        }
+
+        .table-heading p {
+            margin: 6px 0 0;
+            color: #718096;
+            font-size: 13px;
+        }
+
+        .table-container {
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 760px;
+        }
+
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #e8edf3;
+        }
+
+        th {
+            background-color: #edf2f7;
+            color: #243e63;
+            font-size: 12px;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        td {
+            font-size: 13px;
+            color: #34445a;
+        }
+
+        tbody tr:hover {
+            background-color: #f8fafc;
+        }
+
+        tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .student-name {
+            font-weight: bold;
+            color: #263449;
+        }
+
+        .number-cell {
+            text-align: center;
+        }
+
+        .percentage {
+            font-weight: bold;
+            color: #21845a;
+        }
+
+        .empty {
+            padding: 35px;
+            text-align: center;
+            color: #718096;
+        }
+
+        /* FOOTER NOTE */
+
+        .report-note {
+            margin-top: 14px;
+            padding: 13px 15px;
+            background-color: #edf2f7;
+            border: 1px solid #dce4ed;
+            border-radius: 7px;
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.6;
+        }
+
+        /* RESPONSIVE */
+
+        @media (max-width: 850px) {
+            .summary-tools {
+                grid-template-columns: 1fr;
+            }
+
+            .download-panel {
+                min-height: auto;
+            }
+        }
+
+        @media (max-width: 600px) {
+            body {
+                padding: 12px;
+            }
+
+            .header,
+            .tool-panel {
+                padding: 17px;
+            }
+
+            h1 {
+                font-size: 22px;
+            }
+
+            .date-fields {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .field {
+                width: 100%;
+            }
+
+            .generate-button {
+                width: 100%;
+            }
+
+            .buttons {
+                flex-direction: column;
+            }
+
+            .buttons .button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+
+        <!-- PAGE HEADER -->
+
+        <div class="header">
+
+            <h1>Student Attendance Summary</h1>
+
+            <p class="subtitle">
+                {{ class_room.year_level }} -
+                {{ class_room.section }}
+                | Academic Year: {{ class_room.academic_year }}
+                | Subject: {{ class_room.subject }}
+            </p>
+
+            <div class="buttons">
+
+                <a class="button secondary"
+                   href="{{ url_for('class_detail', class_id=class_room.id) }}">
+                    Back to Class
+                </a>
+
+                <a class="button"
+                   href="{{ url_for('attendance', class_id=class_room.id) }}">
+                    Take Attendance
+                </a>
+
+                <a class="button secondary"
+                   href="{{ url_for('attendance_reports', class_id=class_room.id) }}">
+                    Daily Attendance Report
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- FLASH MESSAGES -->
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="notice">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- DATE RANGE AND DOWNLOAD PANELS -->
+
+        <div class="summary-tools">
+
+            <!-- SELECT DATE RANGE -->
+
+            <div class="tool-panel">
+
+                <h2>Select Date Range</h2>
+
+                <p class="panel-description">
+                    Choose the starting and ending dates for the attendance summary.
+                </p>
+
+                <form method="GET"
+                      action="{{ url_for('student_attendance_summary',
+                                         class_id=class_room.id) }}">
+
+                    <div class="date-fields">
+
+                        <div class="field">
+                            <label for="start_date">Start Date</label>
+
+                            <input type="date"
+                                   id="start_date"
+                                   name="start_date"
+                                   value="{{ start_date }}"
+                                   max="{{ end_date }}"
+                                   required>
+                        </div>
+
+                        <div class="field">
+                            <label for="end_date">End Date</label>
+
+                            <input type="date"
+                                   id="end_date"
+                                   name="end_date"
+                                   value="{{ end_date }}"
+                                   min="{{ start_date }}"
+                                   required>
+                        </div>
+
+                        <button type="submit"
+                                class="button generate-button">
+                            Generate Summary
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+            <!-- DOWNLOAD EXCEL -->
+
+            <div class="tool-panel download-panel">
+
+                <div class="download-content">
+
+                    <div class="download-icon">
+                        ↓
+                    </div>
+
+                    <div class="download-text">
+
+                        <h2>Download Excel</h2>
+
+                        <p>
+                            Export the student attendance summary
+                            for the selected date range as an Excel file.
+                        </p>
+
+                    </div>
+
+                </div>
+
+                <a class="button download-button"
+                   href="{{ url_for('export_student_attendance_summary',
+                                    class_id=class_room.id,
+                                    start_date=start_date,
+                                    end_date=end_date) }}">
+                    Download Excel File
+                </a>
+
+            </div>
+
+        </div>
+
+        <!-- ATTENDANCE SUMMARY TABLE -->
+
+        <div class="table-section">
+
+            <div class="table-heading">
+
+                <h2>Attendance Records</h2>
+
+                <p>
+                    Summary from {{ start_date }} to {{ end_date }}
+                </p>
+
+            </div>
+
+            <div class="table-container">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th>Student Name</th>
+                            <th>Present</th>
+                            <th>Absent</th>
+                            <th>Late</th>
+                            <th>Recorded Days</th>
+                            <th>Attendance Percentage</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                        {% for row in summary_rows %}
+
+                            <tr>
+
+                                <td class="student-name">
+                                    {{ row.student.full_name }}
+                                </td>
+
+                                <td class="number-cell">
+                                    {{ row.present }}
+                                </td>
+
+                                <td class="number-cell">
+                                    {{ row.absent }}
+                                </td>
+
+                                <td class="number-cell">
+                                    {{ row.late }}
+                                </td>
+
+                                <td class="number-cell">
+                                    {{ row.recorded }}
+                                </td>
+
+                                <td class="percentage">
+                                    {{ "%.1f"|format(row.percentage) }}%
+                                </td>
+
+                            </tr>
+
+                        {% else %}
+
+                            <tr>
+                                <td colspan="6" class="empty">
+                                    No students have been added to this class yet.
+                                </td>
+                            </tr>
+
+                        {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+            </div>
+
+        </div>
+
+        <!-- REPORT NOTE -->
+
+        <div class="report-note">
+
+            Showing attendance from {{ start_date }} to {{ end_date }}.
+            Attendance percentage counts Present and Late as attendance.
+            Dates without recorded attendance are excluded from the calculation.
+
+        </div>
+
+    </div>
+</body>
+</html>

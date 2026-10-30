@@ -1,0 +1,679 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Dashboard | SAMS</title>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --navy: #183153;
+            --navy-light: #25466f;
+            --green: #356859;
+            --background: #f3f5f8;
+            --text: #263445;
+            --muted: #657386;
+            --border: #e0e5eb;
+            --white: #ffffff;
+        }
+
+        body {
+            min-height: 100vh;
+            min-height: 100dvh;
+            display: flex;
+            flex-direction: column;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: var(--background);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        button,
+        a {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        a:focus-visible,
+        button:focus-visible {
+            outline: 3px solid #7ba6d8;
+            outline-offset: 3px;
+        }
+
+        /* Header */
+        .navbar {
+            min-height: 72px;
+            padding: 12px 5%;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+        }
+
+        .brand-icon {
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 7px;
+            background: var(--white);
+            color: var(--navy);
+            font-size: 21px;
+            font-weight: 800;
+        }
+
+        .brand h1 {
+            font-size: 19px;
+            letter-spacing: 1px;
+            line-height: 1.2;
+        }
+
+        .brand p {
+            margin-top: 3px;
+            color: #d5dfeb;
+            font-size: 11px;
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-label {
+            color: #d5dfeb;
+            font-size: 12px;
+        }
+
+        .logout-form {
+            margin: 0;
+        }
+
+        .logout-button {
+            padding: 8px 13px;
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 5px;
+            background: transparent;
+            color: var(--white);
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .logout-button:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Main content */
+        main {
+            width: 100%;
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 28px 24px;
+            flex: 1;
+        }
+
+        /* Flash messages */
+        .flash-container {
+            margin-bottom: 16px;
+        }
+
+        .flash-message {
+            margin-bottom: 8px;
+            padding: 10px 13px;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            font-size: 12px;
+            overflow-wrap: anywhere;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .flash-success {
+            background: #e8f5ed;
+            border-color: #c5e6d1;
+            color: #245c46;
+        }
+
+        .flash-error {
+            background: #fcebed;
+            border-color: #f3cbd0;
+            color: #8b2e35;
+        }
+
+        .flash-message:not(.flash-success):not(.flash-error) {
+            background: #eaf2fb;
+            border-color: #d1e2f5;
+            color: #294f78;
+        }
+
+        .flash-message.dismissed {
+            opacity: 0;
+            transform: translateY(-4px);
+        }
+
+        /* Welcome section */
+        .welcome-section {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            padding: 25px 28px;
+            margin-bottom: 24px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--green);
+            border-radius: 8px;
+        }
+
+        .welcome-label {
+            margin-bottom: 5px;
+            color: var(--green);
+            font-size: 10px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .welcome-section h2 {
+            margin-bottom: 6px;
+            color: var(--navy);
+            font-size: clamp(23px, 3vw, 30px);
+            line-height: 1.25;
+            overflow-wrap: anywhere;
+        }
+
+        .welcome-section p {
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .welcome-icon {
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 10px;
+            background: #edf2f7;
+            font-size: 32px;
+        }
+
+        /* Section headings */
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 14px;
+        }
+
+        .section-heading h2 {
+            color: var(--navy);
+            font-size: 20px;
+        }
+
+        .section-heading p {
+            margin-top: 3px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* Buttons */
+        .button {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 7px;
+            padding: 10px 15px;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s, transform 0.2s;
+        }
+
+        .button:hover {
+            transform: translateY(-1px);
+        }
+
+        .button-primary {
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        .button-primary:hover {
+            background: var(--navy-light);
+        }
+
+        .button-secondary {
+            background: var(--white);
+            color: var(--navy);
+            border-color: #cbd4df;
+        }
+
+        .button-secondary:hover {
+            background: #f3f5f8;
+        }
+
+        /* Management cards */
+        .management-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
+        }
+
+        .management-card {
+            min-width: 0;
+            padding: 23px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .management-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(24, 49, 83, 0.06);
+        }
+
+        .card-icon {
+            width: 43px;
+            height: 43px;
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 7px;
+            background: #edf2f7;
+            color: var(--navy);
+            font-size: 23px;
+        }
+
+        .management-card h3 {
+            margin-bottom: 7px;
+            color: var(--navy);
+            font-size: 16px;
+        }
+
+        .management-card p {
+            min-height: 40px;
+            margin-bottom: 17px;
+            color: var(--muted);
+            font-size: 12px;
+            line-height: 1.65;
+        }
+
+        /* Future features */
+        .future-section {
+            margin-top: 25px;
+            padding: 18px 20px;
+            background: #edf2f7;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+        }
+
+        .future-section h3 {
+            margin-bottom: 12px;
+            color: var(--navy);
+            font-size: 14px;
+        }
+
+        .future-list {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 12px;
+            list-style: none;
+        }
+
+        .future-list li {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .future-dot {
+            width: 7px;
+            height: 7px;
+            flex-shrink: 0;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        /* Footer */
+        footer {
+            padding: 12px 15px;
+            background: var(--navy);
+            color: #d5dfeb;
+            text-align: center;
+            font-size: 10px;
+        }
+
+        footer p + p {
+            margin-top: 3px;
+            color: #b8c7d9;
+        }
+
+        /* Animation */
+        .animate-in {
+            animation: appear 0.4s ease-out both;
+        }
+
+        @keyframes appear {
+            from {
+                opacity: 0;
+                transform: translateY(7px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Tablet */
+        @media (max-width: 700px) {
+            main {
+                padding: 22px 17px;
+            }
+
+            .welcome-section {
+                padding: 20px;
+            }
+
+            .management-grid {
+                gap: 12px;
+            }
+
+            .management-card {
+                padding: 18px;
+            }
+
+            .future-list {
+                grid-template-columns: 1fr;
+                gap: 9px;
+            }
+        }
+
+        /* Mobile */
+        @media (max-width: 480px) {
+            .navbar {
+                padding: 10px 13px;
+                min-height: 64px;
+            }
+
+            .brand-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 18px;
+            }
+
+            .brand h1 {
+                font-size: 16px;
+            }
+
+            .brand p {
+                max-width: 190px;
+                font-size: 9px;
+            }
+
+            .header-label {
+                display: none;
+            }
+
+            .logout-button {
+                padding: 7px 9px;
+                font-size: 11px;
+            }
+
+            main {
+                padding: 17px 13px;
+            }
+
+            .welcome-section {
+                padding: 17px;
+                gap: 10px;
+            }
+
+            .welcome-section h2 {
+                font-size: 22px;
+            }
+
+            .welcome-section p {
+                font-size: 11px;
+            }
+
+            .welcome-icon {
+                width: 45px;
+                height: 45px;
+                font-size: 23px;
+            }
+
+            .section-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .section-heading h2 {
+                font-size: 18px;
+            }
+
+            .management-grid {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+
+            .management-card {
+                padding: 16px;
+            }
+
+            .card-icon {
+                width: 36px;
+                height: 36px;
+                margin-bottom: 10px;
+                font-size: 20px;
+            }
+
+            .management-card p {
+                min-height: auto;
+                margin-bottom: 13px;
+            }
+
+            .future-section {
+                margin-top: 18px;
+                padding: 15px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Header -->
+    <header class="navbar">
+        <a class="brand" href="{{ url_for('dashboard') }}">
+            <div class="brand-icon" aria-hidden="true">S</div>
+
+            <div>
+                <h1>SAMS</h1>
+                <p>Student Attendance Monitoring System</p>
+            </div>
+        </a>
+
+        <div class="header-actions">
+            <span class="header-label">Teacher Portal</span>
+
+            <form class="logout-form" method="POST"
+                  action="{{ url_for('logout') }}"
+                  id="logoutForm">
+
+                <input type="hidden" name="csrf_token"
+                       value="{{ csrf_token() }}">
+
+                <button class="logout-button" type="submit">
+                    Log Out
+                </button>
+            </form>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- Flash messages -->
+        <div class="flash-container" aria-live="polite">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% for category, message in messages %}
+                    <div class="flash-message
+                        {% if category == 'success' %}
+                            flash-success
+                        {% elif category == 'error' %}
+                            flash-error
+                        {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endwith %}
+        </div>
+
+        <!-- Welcome section -->
+        <section class="welcome-section animate-in">
+            <div>
+                <div class="welcome-label">Teacher Dashboard</div>
+
+                <h2>Welcome, {{ teacher.full_name }}!</h2>
+
+                <p>
+                    You are successfully logged in.
+                    Manage your classes and student attendance from here.
+                </p>
+            </div>
+
+        </section>
+
+        <!-- Class management -->
+        <section class="animate-in">
+            <div class="section-heading">
+                <div>
+                    <h2>Class Management</h2>
+                    <p>Create classes and manage your student records.</p>
+                </div>
+            </div>
+
+            <div class="management-grid">
+
+                <article class="management-card">
+                    <div class="card-icon" aria-hidden="true">▤</div>
+
+                    <h3>My Classes</h3>
+
+                    <p>
+                        View your existing classes, organize class
+                        sections, and access your student lists.
+                    </p>
+
+                    <a class="button button-secondary"
+                       href="{{ url_for('classes') }}">
+                        View My Classes →
+                    </a>
+                </article>
+
+                <article class="management-card">
+                    <div class="card-icon" aria-hidden="true">＋</div>
+
+                    <h3>Create New Class</h3>
+
+                    <p>
+                        Set up a new class to start organizing
+                        students and recording attendance.
+                    </p>
+
+                    <a class="button button-primary"
+                       href="{{ url_for('create_class') }}">
+                        Create a Class →
+                    </a>
+                </article>
+
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>
+            <strong>SAMS</strong> — Student Attendance Monitoring System
+        </p>
+
+        <p>
+            Supporting organized and efficient classroom management.
+        </p>
+    </footer>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+
+            const flashMessages =
+                document.querySelectorAll(".flash-message");
+
+            flashMessages.forEach(function (message) {
+                window.setTimeout(function () {
+                    message.classList.add("dismissed");
+
+                    window.setTimeout(function () {
+                        message.remove();
+                    }, 300);
+                }, 4000);
+            });
+
+            const logoutForm = document.getElementById("logoutForm");
+
+            logoutForm.addEventListener("submit", function (event) {
+                const confirmed = window.confirm(
+                    "Are you sure you want to log out?"
+                );
+
+                if (!confirmed) {
+                    event.preventDefault();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>

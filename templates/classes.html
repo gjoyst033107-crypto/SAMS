@@ -1,0 +1,913 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>My Classes - SAMS</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #172b4d;
+            --navy-light: #243e63;
+            --green: #21845a;
+            --green-light: #e8f5ee;
+            --background: #f4f7fb;
+            --white: #ffffff;
+            --text: #263449;
+            --muted: #718096;
+            --border: #dce4ed;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--background);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        /* Navigation */
+        .navbar {
+            min-height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 16px;
+            padding: 12px 6%;
+            background: var(--navy);
+            color: var(--white);
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 11px;
+            color: var(--white);
+            text-decoration: none;
+            font-size: 19px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+        }
+
+        .brand-icon {
+            width: 38px;
+            height: 38px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            background: var(--navy-light);
+            font-size: 17px;
+        }
+
+        .nav-label {
+            color: #d6dfeb;
+            font-size: 13px;
+        }
+
+        /* Main content */
+        .main {
+            width: 100%;
+            max-width: 1120px;
+            margin: 0 auto;
+            padding: 30px 24px;
+            flex: 1;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            margin-bottom: 22px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .breadcrumb a {
+            color: var(--green);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Page heading */
+        .page-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 20px;
+            margin-bottom: 26px;
+        }
+
+        .eyebrow {
+            margin-bottom: 7px;
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 1.6px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin-bottom: 8px;
+            color: var(--navy);
+            font-size: clamp(26px, 4vw, 32px);
+            letter-spacing: -0.8px;
+        }
+
+        .subtitle {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        /* Main buttons */
+        .btn {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 16px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+            transition: transform 0.2s, background 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: var(--white);
+        }
+
+        .btn-primary:hover {
+            background: #176d49;
+        }
+
+        .btn-secondary {
+            border-color: var(--border);
+            background: var(--white);
+            color: var(--navy);
+        }
+
+        .btn-secondary:hover {
+            background: #f4f7fb;
+        }
+
+        /* Class summary */
+        .summary-panel {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 19px 21px;
+            border: 1px solid #d4e9dc;
+            border-radius: 12px;
+            background: var(--green-light);
+        }
+
+        .summary-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background: var(--white);
+            color: var(--green);
+            font-size: 22px;
+        }
+
+        .summary-text {
+            flex: 1;
+        }
+
+        .summary-text h2 {
+            margin-bottom: 4px;
+            color: var(--navy);
+            font-size: 15px;
+        }
+
+        .summary-text p {
+            color: #547464;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .summary-count {
+            color: var(--green);
+            font-size: 26px;
+            font-weight: 800;
+            font-variant-numeric: tabular-nums;
+        }
+
+        /* Class list heading */
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .section-heading h2 {
+            color: var(--navy);
+            font-size: 18px;
+        }
+
+        .section-heading span {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        /* Class cards */
+        .class-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 18px;
+        }
+
+        .class-card {
+            overflow: hidden;
+            border: 1px solid var(--border);
+            border-radius: 13px;
+            background: var(--white);
+            box-shadow: 0 5px 18px rgba(23, 43, 77, 0.04);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .class-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 9px 24px rgba(23, 43, 77, 0.09);
+        }
+
+        /* Top section: Class information and actions */
+        .class-card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 15px;
+            padding: 21px 21px 19px;
+        }
+
+        .class-card-main {
+            display: flex;
+            align-items: flex-start;
+            gap: 13px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .class-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            border-radius: 12px;
+            background: #edf2fa;
+            color: var(--navy);
+            font-size: 22px;
+        }
+
+        .class-details {
+            min-width: 0;
+            flex: 1;
+        }
+
+        .class-details h3 {
+            margin-bottom: 6px;
+            overflow-wrap: anywhere;
+            color: var(--navy);
+            font-size: 17px;
+            line-height: 1.4;
+        }
+
+        .class-details p {
+            color: var(--muted);
+            font-size: 12px;
+        }
+
+        .academic-year {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 12px;
+            padding: 6px 9px;
+            border-radius: 6px;
+            background: #f3f6fa;
+            color: #52647b;
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Top-right action buttons */
+        .class-card-actions {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 7px;
+            flex-shrink: 0;
+        }
+
+        .class-card-actions form {
+            display: inline-flex;
+            margin: 0;
+        }
+
+        .action-btn {
+            min-height: 32px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            padding: 7px 11px;
+            border: 1px solid transparent;
+            border-radius: 7px;
+            font-family: inherit;
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+            cursor: pointer;
+            transition: background 0.2s, border-color 0.2s,
+                        color 0.2s, transform 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        /* Edit button */
+        .edit-btn {
+            border-color: var(--border);
+            background: var(--white);
+            color: var(--navy);
+        }
+
+        .edit-btn:hover {
+            border-color: #aebed1;
+            background: #edf2fa;
+        }
+
+        /* Delete button */
+        .delete-btn {
+            border-color: #f1dada;
+            background: #fffafa;
+            color: #a94442;
+        }
+
+        .delete-btn:hover {
+            border-color: #e8bcbc;
+            background: #fff0f0;
+            color: #922f2d;
+        }
+
+        /* Bottom section */
+        .class-card-bottom {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 13px 21px;
+            border-top: 1px solid #edf1f5;
+            background: #fcfdff;
+        }
+
+        .class-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-shrink: 0;
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 700;
+        }
+
+        .status-dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+        }
+
+        /* Manage Students */
+        .manage-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            padding: 7px 9px;
+            border-radius: 6px;
+            color: var(--green);
+            font-size: 11px;
+            font-weight: 700;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .manage-link:hover {
+            background: var(--green-light);
+            color: #176d49;
+        }
+
+        /* Empty state */
+        .empty-state {
+            padding: 48px 24px;
+            border: 1px dashed #cbd6e2;
+            border-radius: 13px;
+            background: var(--white);
+            text-align: center;
+        }
+
+        .empty-icon {
+            width: 65px;
+            height: 65px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+            border-radius: 18px;
+            background: var(--green-light);
+            color: var(--green);
+            font-size: 29px;
+        }
+
+        .empty-state h2 {
+            margin-bottom: 8px;
+            color: var(--navy);
+            font-size: 19px;
+        }
+
+        .empty-state p {
+            max-width: 360px;
+            margin: 0 auto 21px;
+            color: var(--muted);
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        /* Flash messages */
+        .flash-messages {
+            margin-bottom: 20px;
+        }
+
+        .flash-message {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 9px;
+            padding: 12px 14px;
+            border: 1px solid #cce8d8;
+            border-radius: 8px;
+            background: #edf8f1;
+            color: #216b45;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .flash-message.error,
+        .flash-message.danger {
+            border-color: #f1cccc;
+            background: #fff0f0;
+            color: #a93232;
+        }
+
+        .flash-message.warning {
+            border-color: #f2dfb1;
+            background: #fff8e8;
+            color: #89631a;
+        }
+
+        .flash-message.info {
+            border-color: #cbdff4;
+            background: #eff6ff;
+            color: #285d91;
+        }
+
+        .flash-close {
+            margin-left: auto;
+            border: none;
+            background: transparent;
+            color: inherit;
+            font-size: 18px;
+            cursor: pointer;
+        }
+
+        /* Footer */
+        .footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 16px 6%;
+            border-top: 1px solid var(--border);
+            background: var(--white);
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .footer strong {
+            color: var(--navy);
+        }
+
+        /* Responsive layout */
+        @media (max-width: 900px) {
+            .class-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 720px) {
+            .navbar {
+                min-height: 60px;
+                padding: 10px 20px;
+            }
+
+            .main {
+                padding: 24px 16px;
+            }
+
+            .page-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .page-heading .btn {
+                width: 100%;
+            }
+
+            .summary-panel {
+                padding: 15px;
+            }
+
+            .footer {
+                padding: 14px 20px;
+            }
+        }
+
+        @media (max-width: 520px) {
+            .class-card-top {
+                flex-wrap: wrap;
+                padding: 17px;
+            }
+
+            .class-card-main {
+                width: 100%;
+            }
+
+            .class-card-actions {
+                width: 100%;
+                justify-content: flex-end;
+            }
+
+            .class-card-bottom {
+                padding: 13px 17px;
+            }
+
+            .class-icon {
+                width: 42px;
+                height: 42px;
+            }
+
+            .action-btn {
+                padding: 7px 10px;
+            }
+
+            .manage-link {
+                padding-right: 0;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .nav-label {
+                display: none;
+            }
+
+            .empty-state {
+                padding: 35px 18px;
+            }
+
+            .footer {
+                align-items: flex-start;
+                flex-direction: column;
+                gap: 5px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *,
+            *::before,
+            *::after {
+                animation-duration: 0.01ms !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar">
+
+        <a href="{{ url_for('dashboard') }}" class="brand">
+            <span class="brand-icon">S</span>
+            <span>SAMS</span>
+        </a>
+
+        <span class="nav-label">
+            Student Attendance Monitoring System
+        </span>
+
+    </nav>
+
+    <!-- Main content -->
+    <main class="main">
+
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+
+            <span>/</span>
+
+            <span>My Classes</span>
+
+        </div>
+
+        <!-- Page heading -->
+        <header class="page-heading">
+
+            <div>
+
+                <p class="eyebrow">Class Management</p>
+
+                <h1>My Classes</h1>
+
+                <p class="subtitle">
+                    Manage your classes and organize your student lists.
+                </p>
+
+            </div>
+
+            <a href="{{ url_for('create_class') }}"
+               class="btn btn-primary">
+
+                <span>＋</span>
+                Create New Class
+
+            </a>
+
+        </header>
+
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+
+            {% if messages %}
+
+                <div class="flash-messages" aria-live="polite">
+
+                    {% for category, message in messages %}
+
+                        <div class="flash-message {{ category }}">
+
+                            <span aria-hidden="true">●</span>
+
+                            <span>{{ message }}</span>
+
+                            <button
+                                type="button"
+                                class="flash-close"
+                                aria-label="Dismiss message"
+                                onclick="this.parentElement.remove()"
+                            >
+                                ×
+                            </button>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+        {% endwith %}
+
+        <!-- Class list -->
+        {% if classes %}
+
+            <!-- Summary panel -->
+            <section class="summary-panel">
+
+                <div class="summary-icon">▤</div>
+
+                <div class="summary-text">
+
+                    <h2>Your Class Overview</h2>
+
+                    <p>
+                        Select a class below to manage its student list.
+                    </p>
+
+                </div>
+
+                <div class="summary-count">
+                    {{ classes|length }}
+                </div>
+
+            </section>
+
+            <!-- Section heading -->
+            <div class="section-heading">
+
+                <h2>Class List</h2>
+
+                <span>
+                    {{ classes|length }}
+                    class{% if classes|length != 1 %}es{% endif %}
+                </span>
+
+            </div>
+
+            <!-- Class cards -->
+            <div class="class-grid">
+
+                {% for class_room in classes %}
+
+                    <article class="class-card">
+
+                        <!-- Top section -->
+                        <div class="class-card-top">
+
+                            <!-- Class information -->
+                            <div class="class-card-main">
+
+                                <div class="class-icon">▤</div>
+
+                                <div class="class-details">
+
+                                    <h3>
+                                        {{ class_room.year_level }} - {{ class_room.section }}
+                                    </h3>
+
+                                    <p>{{ class_room.subject }}</p>
+
+                                    <span class="academic-year">
+                                        ◷ Academic Year: {{ class_room.academic_year }}
+                                    </span>
+
+                                </div>
+
+                            </div>
+
+                            <!-- Top-right action buttons -->
+                            <div class="class-card-actions">
+
+                                <!-- Edit Class -->
+                                <a
+                                    href="{{ url_for('edit_class', class_id=class_room.id) }}"
+                                    class="action-btn edit-btn"
+                                >
+                                    ✎ Edit
+                                </a>
+
+                                <!-- Delete Class -->
+                                <form
+                                    method="POST"
+                                    action="{{ url_for('delete_class', class_id=class_room.id) }}"
+                                    onsubmit="return confirm('Are you sure you want to delete this class? All students and their attendance records in this class will also be permanently deleted.');"
+                                >
+
+                                    <input
+                                        type="hidden"
+                                        name="csrf_token"
+                                        value="{{ csrf_token() }}"
+                                    >
+
+                                    <button
+                                        type="submit"
+                                        class="action-btn delete-btn"
+                                    >
+                                        × Delete
+                                    </button>
+
+                                </form>
+
+                            </div>
+
+                        </div>
+
+                        <!-- Bottom section -->
+                        <div class="class-card-bottom">
+
+                            <span class="class-status">
+
+                                <span class="status-dot"></span>
+
+                                Your Class
+
+                            </span>
+
+                            <!-- Manage Students -->
+                            <a
+                                href="{{ url_for('class_detail', class_id=class_room.id) }}"
+                                class="manage-link"
+                            >
+                                Manage Students →
+                            </a>
+
+                        </div>
+
+                    </article>
+
+                {% endfor %}
+
+            </div>
+
+        {% else %}
+
+            <!-- Empty state -->
+            <section class="empty-state">
+
+                <div class="empty-icon">▤</div>
+
+                <h2>No Classes Yet</h2>
+
+                <p>
+                    You haven't created any classes yet. Create your first
+                    class to start organizing your students and attendance.
+                </p>
+
+                <a href="{{ url_for('create_class') }}"
+                   class="btn btn-primary">
+
+                    <span>＋</span>
+                    Create Your First Class
+
+                </a>
+
+            </section>
+
+        {% endif %}
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+
+        <span>
+            <strong>SAMS</strong> · Student Attendance Monitoring System
+        </span>
+
+        <span>Class Management</span>
+
+    </footer>
+
+    <!-- Flash message animation -->
+    <script>
+        document.querySelectorAll(".flash-message").forEach(function (message) {
+
+            setTimeout(function () {
+
+                if (message.isConnected) {
+
+                    message.style.transition = "opacity 0.3s ease";
+                    message.style.opacity = "0";
+
+                    setTimeout(function () {
+                        message.remove();
+                    }, 300);
+
+                }
+
+            }, 5000);
+
+        });
+    </script>
+
+</body>
+</html>

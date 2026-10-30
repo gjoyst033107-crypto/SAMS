@@ -1,0 +1,315 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Class - SAMS</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #172b4d;
+            --green: #21845a;
+            --background: #f4f7fb;
+            --white: #ffffff;
+            --text: #263449;
+            --muted: #718096;
+            --border: #dce4ed;
+        }
+
+        body {
+            min-height: 100vh;
+            background: var(--background);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+        }
+
+        .navbar {
+            min-height: 68px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 6%;
+            background: var(--navy);
+            color: white;
+        }
+
+        .brand {
+            color: white;
+            font-size: 19px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .main {
+            width: 100%;
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 35px 20px;
+        }
+
+        .breadcrumb {
+            margin-bottom: 25px;
+            color: var(--muted);
+            font-size: 13px;
+        }
+
+        .breadcrumb a {
+            color: var(--green);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .heading {
+            margin-bottom: 25px;
+        }
+
+        .heading h1 {
+            margin-bottom: 8px;
+            color: var(--navy);
+            font-size: 30px;
+        }
+
+        .heading p {
+            color: var(--muted);
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .form-card {
+            padding: 30px;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            background: var(--white);
+            box-shadow: 0 5px 18px rgba(23, 43, 77, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--navy);
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        input {
+            width: 100%;
+            min-height: 45px;
+            padding: 11px 13px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            outline: none;
+            font-family: inherit;
+            font-size: 14px;
+        }
+
+        input:focus {
+            border-color: var(--green);
+            box-shadow: 0 0 0 3px rgba(33, 132, 90, 0.10);
+        }
+
+        .help-text {
+            display: block;
+            margin-top: 6px;
+            color: var(--muted);
+            font-size: 11px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 28px;
+        }
+
+        .btn {
+            min-height: 42px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 10px 17px;
+            border: none;
+            border-radius: 7px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #176d49;
+        }
+
+        .btn-secondary {
+            border: 1px solid var(--border);
+            background: white;
+            color: var(--navy);
+        }
+
+        .flash-message {
+            margin-bottom: 18px;
+            padding: 12px 14px;
+            border-radius: 7px;
+            background: #fff0f0;
+            color: #a93232;
+            font-size: 13px;
+        }
+
+        .flash-message.success {
+            background: #edf8f1;
+            color: #216b45;
+        }
+
+        @media (max-width: 500px) {
+            .form-card {
+                padding: 20px;
+            }
+
+            .form-actions {
+                flex-direction: column-reverse;
+            }
+
+            .form-actions .btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="{{ url_for('dashboard') }}" class="brand">
+            SAMS
+        </a>
+
+        <span>Student Attendance Monitoring System</span>
+    </nav>
+
+    <main class="main">
+
+        <div class="breadcrumb">
+            <a href="{{ url_for('dashboard') }}">Dashboard</a>
+            /
+            <a href="{{ url_for('classes') }}">My Classes</a>
+            /
+            Edit Class
+        </div>
+
+        <div class="heading">
+            <h1>Edit Class</h1>
+            <p>Update the information of your existing class.</p>
+        </div>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% for category, message in messages %}
+                <div class="flash-message {{ category }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        {% endwith %}
+
+        <div class="form-card">
+
+            <form method="POST">
+
+                <input
+                    type="hidden"
+                    name="csrf_token"
+                    value="{{ csrf_token() }}"
+                >
+
+                <div class="form-group">
+                    <label for="academic_year">Academic Year</label>
+
+                    <input
+                        type="text"
+                        id="academic_year"
+                        name="academic_year"
+                        value="{{ class_room.academic_year }}"
+                        placeholder="Example: 2026-2027"
+                        required
+                    >
+
+                    <span class="help-text">
+                        Enter the academic year in YYYY-YYYY format.
+                    </span>
+                </div>
+
+                <div class="form-group">
+                    <label for="year_level">Year Level</label>
+
+                    <input
+                        type="text"
+                        id="year_level"
+                        name="year_level"
+                        value="{{ class_room.year_level }}"
+                        placeholder="Example: 3rd Year"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="section">Section</label>
+
+                    <input
+                        type="text"
+                        id="section"
+                        name="section"
+                        value="{{ class_room.section }}"
+                        placeholder="Example: BSCS 3A"
+                        required
+                    >
+                </div>
+
+                <div class="form-group">
+                    <label for="subject">Subject</label>
+
+                    <input
+                        type="text"
+                        id="subject"
+                        name="subject"
+                        value="{{ class_room.subject }}"
+                        placeholder="Enter subject"
+                        required
+                    >
+                </div>
+
+                <div class="form-actions">
+
+                    <a href="{{ url_for('classes') }}"
+                       class="btn btn-secondary">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="btn btn-primary">
+                        Save Changes
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</body>
+</html>

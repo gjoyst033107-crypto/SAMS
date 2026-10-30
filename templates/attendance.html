@@ -1,0 +1,910 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class Attendance - SAMS</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --navy: #172b4d;
+            --navy-light: #243e63;
+            --green: #21845a;
+            --green-light: #e8f5ee;
+            --background: #f4f7fb;
+            --white: #ffffff;
+            --text: #263449;
+            --muted: #718096;
+            --border: #dce4ed;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background: var(--background);
+            color: var(--text);
+            font-family: "Segoe UI", Arial, sans-serif;
+            font-size: 12px;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        /* Navigation */
+
+        .navbar {
+            min-height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            padding: 6px 3%;
+            background: var(--navy);
+            color: white;
+        }
+
+        .brand {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: white;
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        .brand-icon {
+            width: 29px;
+            height: 29px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            background: var(--navy-light);
+        }
+
+        .nav-label {
+            color: #d6dfeb;
+            font-size: 10px;
+        }
+
+        /* Main layout */
+
+        .container {
+            width: 100%;
+            max-width: 1500px;
+            margin: 0 auto;
+            padding: 10px 22px 14px;
+            flex: 1;
+        }
+
+        .breadcrumb {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 7px;
+            margin-bottom: 8px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .breadcrumb a {
+            color: var(--green);
+            font-weight: 600;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        /* Page heading */
+
+        .page-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 10px;
+            padding: 10px 13px;
+            border: 1px solid var(--border);
+            border-left: 4px solid var(--green);
+            border-radius: 7px;
+            background: white;
+        }
+
+        .heading-main {
+            min-width: 200px;
+        }
+
+        .eyebrow {
+            margin-bottom: 2px;
+            color: var(--green);
+            font-size: 9px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        h1 {
+            margin-bottom: 5px;
+            color: var(--navy);
+            font-size: 20px;
+        }
+
+        .class-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px 12px;
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .class-info strong {
+            color: var(--text);
+        }
+
+        .page-actions {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 5px;
+        }
+
+        /* Buttons */
+
+        .btn {
+            min-height: 29px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 9px;
+            border: 1px solid transparent;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 10px;
+            font-weight: 700;
+            white-space: nowrap;
+            cursor: pointer;
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: white;
+        }
+
+        .btn-primary:hover,
+        .save-button:hover {
+            background: #176d49;
+        }
+
+        .btn-navy {
+            background: var(--navy);
+            color: white;
+        }
+
+        .btn-navy:hover {
+            background: var(--navy-light);
+        }
+
+        .btn-secondary {
+            border-color: var(--border);
+            background: white;
+            color: var(--navy);
+        }
+
+        .btn-secondary:hover {
+            background: #f4f7fb;
+        }
+
+        /* Flash messages */
+
+        .flash-messages {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+            margin-bottom: 9px;
+        }
+
+        .flash-message {
+            padding: 7px 10px;
+            border: 1px solid #cce8d8;
+            border-radius: 5px;
+            background: #edf8f1;
+            color: #216b45;
+            font-size: 11px;
+        }
+
+        .flash-message.error,
+        .flash-message.danger {
+            border-color: #f1cccc;
+            background: #fff0f0;
+            color: #a93232;
+        }
+
+        .flash-message.warning {
+            border-color: #f2dfb1;
+            background: #fff8e8;
+            color: #89631a;
+        }
+
+        .flash-message.info {
+            border-color: #cbdff4;
+            background: #eff6ff;
+            color: #285d91;
+        }
+
+        /* Compact dashboard panels */
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+
+        .panel {
+            min-width: 0;
+            padding: 11px 13px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            background: white;
+            box-shadow: 0 2px 6px rgba(23, 43, 77, 0.025);
+        }
+
+        .panel-title {
+            margin-bottom: 3px;
+            color: var(--navy);
+            font-size: 12px;
+            font-weight: 750;
+        }
+
+        .panel-description {
+            margin-bottom: 6px;
+            color: var(--muted);
+            font-size: 10px;
+            line-height: 1.3;
+        }
+
+        /* Class information panel */
+
+        .class-details {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 6px;
+        }
+
+        .detail-item {
+            min-width: 0;
+            padding: 8px;
+            border: 1px solid #e5ebf2;
+            border-radius: 5px;
+            background: #f8fafc;
+        }
+
+        .detail-label {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .detail-value {
+            display: block;
+            color: var(--navy);
+            font-size: 11px;
+            font-weight: 700;
+            overflow-wrap: anywhere;
+        }
+
+        /* Date filter panel */
+
+        .date-form {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .date-field {
+            flex: 1;
+            min-width: 0;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 4px;
+            color: var(--text);
+            font-size: 10px;
+            font-weight: 700;
+        }
+
+        input[type="date"],
+        select {
+            width: 100%;
+            min-height: 31px;
+            padding: 5px 8px;
+            border: 1px solid #cbd5e0;
+            border-radius: 5px;
+            background: white;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 11px;
+        }
+
+        input[type="date"]:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--green);
+            box-shadow: 0 0 0 2px rgba(33, 132, 90, 0.1);
+        }
+
+        
+        /* Compact attendance date panel */
+
+        .date-panel {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 10px 13px;
+        }
+
+        .date-panel .panel-title {
+            margin-bottom: 3px;
+        }
+
+        .date-panel .panel-description {
+            margin-bottom: 10px;
+        }
+
+        .date-panel .date-form {
+            display: flex;
+            align-items: flex-end;
+            gap: 8px;
+        }
+
+        .date-panel .date-field {
+            flex: 0 1 220px;
+            max-width: 220px;
+            min-width: 0;
+        }
+
+        .date-panel input[type="date"] {
+            width: 100%;
+            min-height: 36px;
+        }
+
+        .date-panel .btn {
+            flex-shrink: 0;
+            min-height: 36px;
+            padding: 7px 13px;
+        }
+
+        /* Attendance table panel */
+
+        .attendance-panel {
+            padding: 12px 13px;
+        }
+
+        .attendance-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 9px;
+        }
+
+        .attendance-title {
+            color: var(--navy);
+            font-size: 14px;
+            font-weight: 750;
+        }
+
+        .date-badge {
+            padding: 5px 8px;
+            border: 1px solid #cce8d8;
+            border-radius: 5px;
+            background: var(--green-light);
+            color: var(--green);
+            font-size: 10px;
+        }
+
+        .table-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            font-size: 11px;
+        }
+
+        thead {
+            background: #edf2f8;
+        }
+
+        th {
+            padding: 8px 11px;
+            color: var(--navy);
+            font-size: 9px;
+            font-weight: 800;
+            text-align: left;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: nowrap;
+        }
+
+        td {
+            padding: 5px 11px;
+            border-top: 1px solid #edf1f5;
+        }
+
+        tbody tr:nth-child(even) {
+            background: #f9fbfd;
+        }
+
+        tbody tr:hover {
+            background: #f0f7f3;
+        }
+
+        .number-column {
+            width: 48px;
+            color: var(--muted);
+        }
+
+        .student-name {
+            font-weight: 600;
+            overflow-wrap: anywhere;
+        }
+
+        .status-column {
+            width: 210px;
+        }
+
+        .status-select {
+            max-width: 240px;
+        }
+
+        .table-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .student-count {
+            color: var(--muted);
+            font-size: 10px;
+        }
+
+        .student-count strong {
+            color: var(--navy);
+        }
+
+        .save-button {
+            min-height: 32px;
+            padding: 7px 13px;
+            border: none;
+            border-radius: 5px;
+            background: var(--green);
+            color: white;
+            font-family: inherit;
+            font-size: 10px;
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .empty-message {
+            padding: 22px 12px;
+            border: 1px dashed #cbd6e2;
+            border-radius: 6px;
+            background: #fafcff;
+            color: var(--muted);
+            font-size: 11px;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+
+        .footer {
+            min-height: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            padding: 7px 3%;
+            border-top: 1px solid var(--border);
+            background: white;
+            color: var(--muted);
+            font-size: 9px;
+        }
+
+        .footer strong {
+            color: var(--navy);
+        }
+
+        /* Smaller screens */
+
+        @media (max-width: 900px) {
+            .container {
+                padding-right: 14px;
+                padding-left: 14px;
+            }
+
+            .page-heading {
+                align-items: flex-start;
+                flex-direction: column;
+            }
+
+            .page-actions {
+                justify-content: flex-start;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .navbar {
+                padding: 7px 12px;
+            }
+
+            .brand {
+                font-size: 15px;
+            }
+
+            .nav-label {
+                max-width: 150px;
+                font-size: 9px;
+                text-align: right;
+            }
+
+            .container {
+                padding: 10px;
+            }
+
+            .page-heading {
+                padding: 11px;
+            }
+
+            h1 {
+                font-size: 19px;
+            }
+
+            .page-actions {
+                gap: 5px;
+            }
+
+            .btn {
+                padding: 7px 8px;
+                font-size: 9px;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+                gap: 8px;
+                margin-bottom: 8px;
+            }
+
+            .panel {
+                padding: 10px;
+            }
+
+            .class-details {
+                gap: 5px;
+            }
+
+            .detail-item {
+                padding: 7px 6px;
+            }
+
+            .date-panel .date-form {
+                align-items: flex-end;
+                flex-direction: row;
+                flex-wrap: wrap;
+            }
+
+            .date-panel .date-field {
+                flex: 1 1 160px;
+                max-width: 220px;
+            }
+
+            .date-panel .date-form .btn {
+                align-self: flex-end;
+            }
+
+            .attendance-panel {
+                padding: 10px;
+            }
+
+            .status-column {
+                min-width: 155px;
+            }
+
+            .table-footer {
+                align-items: flex-start;
+            }
+
+            .footer {
+                padding: 7px 10px;
+                font-size: 8px;
+            }
+        }
+
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                transition: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <nav class="navbar">
+        <a href="{{ url_for('classes') }}" class="brand">
+            <span class="brand-icon">S</span>
+            <span>SAMS</span>
+        </a>
+
+        <span class="nav-label">
+            Student Attendance Monitoring System
+        </span>
+    </nav>
+
+    <main class="container">
+
+        <div class="breadcrumb">
+            <a href="{{ url_for('classes') }}">My Classes</a>
+            <span>/</span>
+            <a href="{{ url_for('class_detail', class_id=class_room.id) }}">
+                Manage Students
+            </a>
+            <span>/</span>
+            <span>Attendance</span>
+        </div>
+
+        <header class="page-heading">
+            <div class="heading-main">
+                <p class="eyebrow">Class Management</p>
+                <h1>Class Attendance</h1>
+
+                <div class="class-info">
+                    <span>Academic Year: <strong>{{ class_room.academic_year }}</strong></span>
+                    <span>Year Level: <strong>{{ class_room.year_level }}</strong></span>
+                    <span>Section: <strong>{{ class_room.section }}</strong></span>
+                </div>
+            </div>
+
+            <div class="page-actions">
+                <a href="{{ url_for('class_detail', class_id=class_room.id) }}"
+                   class="btn btn-secondary">
+                    &larr; Back to Class
+                </a>
+
+                <a href="{{ url_for('attendance_reports', class_id=class_room.id) }}"
+                   class="btn btn-navy">
+                    Attendance Reports
+                </a>
+
+                <a href="{{ url_for('student_attendance_summary', class_id=class_room.id) }}"
+                   class="btn btn-secondary">
+                    Student Summary
+                </a>
+            </div>
+        </header>
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <div class="flash-messages" aria-live="polite">
+                    {% for category, message in messages %}
+                        <div class="flash-message {{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+
+        <!-- Side-by-side panels -->
+
+        <div class="dashboard-grid">
+
+            <section class="panel">
+                <h2 class="panel-title">Class Information</h2>
+                <p class="panel-description">
+                    Details of the selected class.
+                </p>
+
+                <div class="class-details">
+                    <div class="detail-item">
+                        <span class="detail-label">Academic Year</span>
+                        <span class="detail-value">
+                            {{ class_room.academic_year }}
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Year Level</span>
+                        <span class="detail-value">
+                            {{ class_room.year_level }}
+                        </span>
+                    </div>
+
+                    <div class="detail-item">
+                        <span class="detail-label">Section</span>
+                        <span class="detail-value">
+                            {{ class_room.section }}
+                        </span>
+                    </div>
+                </div>
+            </section>
+
+            <section class="panel date-panel">
+                <h2 class="panel-title">Attendance Date</h2>
+                <p class="panel-description">
+                    Choose a date to view or record attendance.
+                </p>
+
+                <form method="GET"
+                      action="{{ url_for('attendance', class_id=class_room.id) }}"
+                      class="date-form">
+
+                    <div class="date-field">
+                        <label for="date">Select Date</label>
+
+                        <input
+                            type="date"
+                            id="date"
+                            name="date"
+                            value="{{ selected_date.isoformat() }}"
+                            required
+                        >
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        View Date
+                    </button>
+                </form>
+            </section>
+
+        </div>
+
+        <!-- Main attendance table -->
+
+        <section class="panel attendance-panel">
+
+            <div class="attendance-top">
+                <h2 class="attendance-title">Student Attendance</h2>
+
+                <span class="date-badge">
+                    {{ selected_date.strftime('%b %d, %Y') }}
+                </span>
+            </div>
+
+            {% if students %}
+
+                <form method="POST"
+                      action="{{ url_for('attendance', class_id=class_room.id) }}">
+
+                    <input
+                        type="hidden"
+                        name="csrf_token"
+                        value="{{ csrf_token() }}"
+                    >
+
+                    <input
+                        type="hidden"
+                        name="attendance_date"
+                        value="{{ selected_date.isoformat() }}"
+                    >
+
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th class="number-column">No.</th>
+                                    <th>Student Name</th>
+                                    <th class="status-column">Attendance Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+                                {% for student in students %}
+                                    <tr>
+                                        <td class="number-column">
+                                            {{ loop.index }}
+                                        </td>
+
+                                        <td class="student-name">
+                                            {{ student.full_name }}
+                                        </td>
+
+                                        <td>
+                                            <select
+                                                class="status-select"
+                                                name="status_{{ student.id }}"
+                                                required
+                                            >
+                                            
+                                                <option value="Present"
+                                                    {% if attendance_records.get(student.id) == 'Present' %}
+                                                        selected
+                                                    {% endif %}>
+                                                    Present
+                                                </option>
+
+                                                <option value="Absent"
+                                                    {% if attendance_records.get(student.id) == 'Absent' %}
+                                                        selected
+                                                    {% endif %}>
+                                                    Absent
+                                                </option>
+
+                                                <option value="Late"
+                                                    {% if attendance_records.get(student.id) == 'Late' %}
+                                                        selected
+                                                    {% endif %}>
+                                                    Late
+                                                </option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="table-footer">
+                        <span class="student-count">
+                            Total students: <strong>{{ students|length }}</strong>
+                        </span>
+
+                        <button type="submit" class="save-button">
+                            Save Attendance
+                        </button>
+                    </div>
+
+                </form>
+
+            {% else %}
+
+                <div class="empty-message">
+                    No students have been added to this class yet.
+                    <br>
+                    Add students from the Manage Students page before taking attendance.
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <span>
+            <strong>SAMS</strong> · Student Attendance Management System
+        </span>
+
+        <span>Class Attendance</span>
+    </footer>
+
+</body>
+</html>
